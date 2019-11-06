@@ -2,7 +2,8 @@
 #' @rdname  Utils
 #' @title Functions for directory operations
 #' @param filepath \code{character} scalar or vector.
-#' @param words \code{character} scalar. Remove substring of the path characters starting to match the word
+#' @param words \code{character} scalar.
+#' Remove substring of the path characters starting to match the word
 #' @param filePath \code{Character} scalar.
 #' @param ... Additional arguments, currently unused
 #' @examples
@@ -22,21 +23,24 @@
 #'
 #' dir.create("testdir")
 #'
-#' checkPathExist("testdir")
+#' checkPathExist(file.path(getwd(),"testdir"))
 #'
-#' tryCatch({checkPathExist("testdir1")},error = function(e) e)
+#' tryCatch({checkPathExist(file.path(dirname(getwd()),
+#' "notexistfolder","testdir"))},error = function(e) e)
 #'
 #' checkFileCreatable("aaa.bed")
 #'
 #' tryCatch({checkFileCreatable("testdir1/aaa.bed")},error = function(e) e)
 #'
 #'
-#' @return \item{getBasenamePrefix}{Get the filepath  basename with removed suffix}
+#' @return \item{getBasenamePrefix}{Get the filepath
+#' basename with removed suffix}
 #' @rdname Utils
 #' @aliases getBasenamePrefix
 #' @export
 getBasenamePrefix <- function(filepath,words,...){
-    return(basename(gsub(paste0("[.]",words,".*"),"",filepath, ignore.case = TRUE)))
+    return(basename(gsub(paste0("[.](",words,").*"),"",filepath,
+                         ignore.case = TRUE)))
 }
 #' @return \item{getPathPrefix}{Get the filepath  with removed suffix}
 #' @rdname Utils
@@ -55,52 +59,80 @@ getPathPrefix <- function(filepath,words,...){
 checkFileExist <- function(filePath,...){
     filePath <- unlist(filePath)
     stopifnot(!is.null(filePath))
-    for(p in filePath){
+    # for(p in filePath){
+    #     if(!file.exists(p)){
+    #         stop(paste("error, file does not exist:",p))
+    #     }
+    # }
+    lapply(filePath, function(p){
         if(!file.exists(p)){
             stop(paste("error, file does not exist:",p))
         }
-    }
+    })
 }
 
-#' @return \item{checkPathExist}{(For package developer) Check directory is exist.}
+#' @return \item{checkPathExist}{(For package developer)
+#' Check directory is exist.}
 #' @rdname Utils
 #' @aliases checkPathExist
 #' @export
 checkPathExist <- function(filePath,...){
     filePath <- unlist(filePath)
     stopifnot(!is.null(filePath))
-    for(p in filePath){
+    # for(p in filePath){
+    #     if(!dir.exists(dirname(p))){
+    #         stop(paste("error, path does not exist:",p))
+    #     }
+    # }
+    lapply(filePath, function(p){
         if(!dir.exists(dirname(p))){
             stop(paste("error, path does not exist:",p))
         }
-    }
+    })
 }
-#' @return \item{checkFileCreatable}{(For package developer) Check file creatable.}
+#' @return \item{checkFileCreatable}{(For package developer)
+#' Check file creatable.}
 #' @rdname Utils
 #' @aliases checkFileCreatable
 #' @export
 checkFileCreatable <- function(filePath,...){
     filePaths <- unlist(filePath)
     stopifnot(!is.null(filePaths))
-    for(filePath in filePaths){
+    # for(filePath in filePaths){
+    #     if(file.exists(filePath)){
+    #         warning(paste("file exist:",filePath,
+    #                       ". It may be overwrited in processing"))
+    #     }else if(!file.create(filePath)){
+    #         stop(paste("cannot create file '",filePath,
+    #                    "', No such file or directory or permission denied"))
+    #     }else{
+    #         unlink(filePath)
+    #     }
+    # }
+    lapply(filePaths, function(filePath){
         if(file.exists(filePath)){
-            warning(paste("file exist:",filePath,". It may be overwrited in processing"))
+            warning(paste("file exist:",filePath,
+                          ". It may be overwrited in processing"))
         }else if(!file.create(filePath)){
-            stop(paste("cannot create file '",filePath,"', No such file or directory or permission denied"))
+            stop(paste("cannot create file '",filePath,
+                       "', No such file or directory or permission denied"))
         }else{
             unlink(filePath)
         }
-    }
+    })
 }
+
+
+
 
 
 
 
 msgBoxBegin<-function(){
-    message(">>>>>>========================================")
+    message(">>>>>>==========================================================")
 }
 
 msgBoxDone<-function(){
-    message("========================================<<<<<<")
+    message("==========================================================<<<<<<")
     message(" ")
 }

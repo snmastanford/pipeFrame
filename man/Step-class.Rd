@@ -6,10 +6,38 @@
 \alias{Step}
 \alias{init,Step-method}
 \alias{init}
-\alias{getStepName,Step-method}
-\alias{getStepName}
-\alias{getDefName,Step-method}
-\alias{getDefName}
+\alias{stepName,Step-method}
+\alias{stepName}
+\alias{stepType,Step-method}
+\alias{stepType}
+\alias{pipeName,Step-method}
+\alias{pipeName}
+\alias{input,Step-method}
+\alias{input}
+\alias{input<-,Step-method}
+\alias{input<-}
+\alias{output,Step-method}
+\alias{output}
+\alias{output<-,Step-method}
+\alias{output<-}
+\alias{param,Step-method}
+\alias{param}
+\alias{param<-,Step-method}
+\alias{param<-}
+\alias{property,Step-method}
+\alias{property}
+\alias{property<-,Step-method}
+\alias{property<-}
+\alias{report,Step-method}
+\alias{report}
+\alias{report<-,Step-method}
+\alias{report<-}
+\alias{argv,Step-method}
+\alias{argv}
+\alias{$,Step-method}
+\alias{$}
+\alias{$<-,Step-method}
+\alias{$<-}
 \alias{getParam,Step-method}
 \alias{getParam}
 \alias{getParamItems,Step-method}
@@ -18,10 +46,6 @@
 \alias{isReady}
 \alias{clearStepCache,Step-method}
 \alias{clearStepCache}
-\alias{getReportVal,Step-method}
-\alias{getReportVal}
-\alias{getReportItems,Step-method}
-\alias{getReportItems}
 \alias{getAutoPath,Step-method}
 \alias{getAutoPath}
 \alias{checkRequireParam,Step-method}
@@ -32,22 +56,47 @@
 \alias{getParamMD5Path}
 \alias{getStepWorkDir,Step-method}
 \alias{getStepWorkDir}
-\alias{getStepId,Step-method}
-\alias{getStepId}
+\alias{stepID,Step-method}
+\alias{stepID}
 \alias{writeLog,Step-method}
 \alias{writeLog}
 \alias{processing}
-\alias{getReportValImp,Step-method}
-\alias{getReportValImp}
-\alias{getReportItemsImp,Step-method}
-\alias{getReportItemsImp}
+\alias{genReport}
 \title{Methods for Step objects}
 \usage{
 \S4method{init}{Step}(.Object, prevSteps = list(), ...)
 
-\S4method{getStepName}{Step}(.Object, ...)
+\S4method{stepName}{Step}(.Object, ...)
 
-\S4method{getDefName}{Step}(.Object, ...)
+\S4method{stepType}{Step}(.Object, ...)
+
+\S4method{pipeName}{Step}(.Object, ...)
+
+\S4method{input}{Step}(.Object)
+
+\S4method{input}{Step}(.Object) <- value
+
+\S4method{output}{Step}(.Object)
+
+\S4method{output}{Step}(.Object) <- value
+
+\S4method{param}{Step}(.Object)
+
+\S4method{param}{Step}(.Object) <- value
+
+\S4method{property}{Step}(.Object, ..., pipeName = NULL)
+
+\S4method{property}{Step}(.Object, pipeName = NULL) <- value
+
+\S4method{report}{Step}(.Object)
+
+\S4method{report}{Step}(.Object) <- value
+
+\S4method{argv}{Step}(.Object)
+
+\S4method{$}{Step}(x, name)
+
+\S4method{$}{Step}(x, name) <- value
 
 \S4method{getParam}{Step}(.Object, item, type = c("input", "output",
   "other"), ...)
@@ -58,10 +107,6 @@
 \S4method{isReady}{Step}(.Object, ...)
 
 \S4method{clearStepCache}{Step}(.Object, ...)
-
-\S4method{getReportVal}{Step}(.Object, item, ...)
-
-\S4method{getReportItems}{Step}(.Object, ...)
 
 \S4method{getAutoPath}{Step}(.Object, originPath, regexSuffixName, suffix,
   ...)
@@ -74,27 +119,38 @@
 
 \S4method{getStepWorkDir}{Step}(.Object, filename = NULL, ...)
 
-\S4method{getStepId}{Step}(.Object, ...)
+\S4method{stepID}{Step}(.Object, ...)
 
 \S4method{writeLog}{Step}(.Object, msg, ..., isWarnning = FALSE,
   appendLog = TRUE, showMsg = TRUE)
 
 processing(.Object, ...)
 
-\S4method{getReportValImp}{Step}(.Object, item, ...)
-
-\S4method{getReportItemsImp}{Step}(.Object, item, ...)
+genReport(.Object, ...)
 }
 \arguments{
 \item{.Object}{\code{Step} object scalar.
 Step object is returned by functions in each step.}
 
-\item{prevSteps}{\code{List} scalar of Step object}
+\item{prevSteps}{\code{List} list of Step objects}
 
 \item{...}{Additional arguments, currently unused.}
 
+\item{value}{any type scalar.
+The value to be set for corresponding item in a list.}
+
+\item{pipeName}{\code{Character} scalar.
+The pipeline name that this step belongs to. Default: NULL. It will be replace by the only pipeline name.}
+
+\item{x}{\code{Step} object scalar.
+Step object is returned by functions in each step.}
+
+\item{name}{\code{Character} scalar.
+Name can be one of inputList, outputList, paramList, allList, propList or
+the item names of inputList, outputList or  paramList}
+
 \item{item}{\code{Character} scalar.
-The items in parameter list or report list.}
+The items in parameter list (input, output and other) or report list.}
 
 \item{type}{\code{Character} scalar.
 Valid types of parameters including "input", "output" and "other"}
@@ -106,25 +162,60 @@ The file name for output file is based on this original path name.}
 
 \item{suffix}{\code{Character} scalar. The new suffix for the file.}
 
-\item{filename}{\code{Character} scaler. The name of file under step working directiory}
+\item{filename}{\code{Character} scaler.
+The name of file under step working directiory}
 
 \item{msg}{\code{Character} scalar. The message to write into log file.}
 
 \item{isWarnning}{\code{Logical} scalar. Set this message as warning message.
 Default: FALSE}
 
-\item{appendLog}{\code{Logical} scalar. Append to the log file. Default: TRUE}
+\item{appendLog}{\code{Logical} scalar. Append to the log file.
+Default: TRUE}
 
-\item{showMsg}{\code{Logical} scalar. Show the message on screen. Default: TRUE}
+\item{showMsg}{\code{Logical} scalar. Show the message on screen.
+Default: TRUE}
 }
 \value{
 the function and result of functions:
 
-\item{init}{(For package developer only) A Step child class object with initialized input, output and other parameters}
+\item{init}{(For package developer only)
+A Step child class object with initialized input,
+output and other parameters}
 
-\item{getStepName}{get Step object Character name}
+\item{stepName}{get Step object Character name}
 
-\item{getDefName}{get Step object Character name}
+\item{stepType}{get Step object Character type name (class name)}
+
+\item{pipeName}{get Step object pipe name}
+
+\item{input}{get input list}
+
+\item{input<-}{set input list}
+
+\item{output}{get output list}
+
+\item{output<-}{set output list}
+
+\item{param}{get other parameters list}
+
+\item{param<-}{set other parameters list}
+
+\item{property}{get property list}
+
+\item{property<-}{set property list}
+
+\item{report}{get report list}
+
+\item{report<-}{set report list}
+
+\item{argv}{get arguments list}
+
+\item{$}{get inputList, outputList, paramList, allList, propList
+or any item value in inputList, outputList or paramList}
+
+\item{$<-}{set inputList, outputList, paramList, allList, propList
+or any item value in inputList, outputList or paramList}
 
 \item{getParam}{Get parameter value set by process function.
 See \code{getParamItems} to obtain valid items for query.}
@@ -135,36 +226,39 @@ See \code{getParamItems} to obtain valid items for query.}
 
 \item{clearStepCache}{Clear cache of Step object}
 
-\item{getReportVal}{Get report value of item.
-See \code{getReportItems} to obtain valid items for query.}
+\item{getAutoPath}{(For package developer)
+Developer can use this method to generate new file name
+based on exist input file name}
 
-\item{getReportItems}{Get all items that can be reported}
+\item{checkRequireParam}{(For package developer)
+Check required inputs or parameters are filled.}
 
-\item{getAutoPath}{(For package developer)Developer can use this method to generate new file name based on exist input file name}
-
-\item{checkRequireParam}{(For package developer) Check required inputs are filled.}
-
-\item{checkRequireParam}{(For package developer) Check required inputs are filled.}
+\item{checkRequireParam}{(For package developer)
+ Check required inputs are filled.}
 
 \item{getParamMD5Path}{The Step object storage directory}
 
 \item{getStepWorkDir}{Get the step work directory of this object}
 
-\item{getStepId}{Get the step ID}
+\item{stepID}{Get the step ID}
 
 \item{writeLog}{(For package developer) write log.}
 
 \item{processing}{(For package developer) Run pipeline step}
 
-\item{getReportValImp}{(For package developer) get Report Value}
-
-\item{getReportItemsImp}{(For package developer) getReportItemsImp}
+\item{genReport}{(For package developer) Generate report list}
 }
 \description{
-Users can call Step object operation methods below to obtain information in objects.
+Users can call Step object operation methods below
+to obtain information in objects.
 }
 \details{
-\code{Step} is a S4 class for generating Step S4 objects. All Step objects generated by child classes inherit from Step. To generate new Step objects, a function wrapper with fixed arguments needs to be implemented. Users use this function to generate new Step functions rather than Step S4 class to generate objects.
+\code{Step} is a S4 class for generating Step S4 objects.
+All Step objects generated by child classes inherit from Step.
+To generate new Step objects,
+a function wrapper with fixed arguments needs to be implemented.
+ Users use this function to generate new Step functions rather
+ than Step S4 class to generate objects.
 }
 \examples{
 
@@ -182,7 +276,8 @@ setMethod(
     f = "init",
     signature = "RandomRegionOnGenome",
     definition = function(.Object,prevSteps = list(),...){
-        # All arguments in function randomRegionOnGenome will be passed from "..."
+        # All arguments in function randomRegionOnGenome
+        # will be passed from "..."
         # so get the arguments from "..." first.
         allparam <- list(...)
         sampleNumb <- allparam[["sampleNumb"]]
@@ -194,17 +289,18 @@ setMethod(
         # no input for this step
         # begin to set output parameters
         if(is.null(outputBed)){
-            .Object@outputList$outputBed <-  getStepWorkDir(.Object,"random.bed")
+            output(.Object)$outputBed <-
+                getStepWorkDir(.Object,"random.bed")
         }else{
-            .Object@outputList$outputBed <- outputBed
+            output(.Object)$outputBed <- outputBed
         }
         # begin to set other parameters
-        .Object@paramList$regionLen <- regionLen
-        .Object@paramList$sampleNumb <- sampleNumb
+        param(.Object)$regionLen <-  regionLen
+        param(.Object)$sampleNumb <- sampleNumb
         if(is.null(genome)){
-            .Object@paramList$bsgenome <- getBSgenome(getGenome())
+            param(.Object)$bsgenome <-  getBSgenome(getGenome())
         }else{
-            .Object@paramList$bsgenome <- getBSgenome(genome)
+            param(.Object)$bsgenome <-  getBSgenome(genome)
         }
         # don't forget to return .Object
         .Object
@@ -227,11 +323,15 @@ setMethod(
         selchr <- grep("_|M",names(chrlens),invert=TRUE)
         chrlens <- chrlens[selchr]
         startchrlens <- chrlens - regionLen
-        spchrs <- sample(x = names(startchrlens),size =  sampleNumb, replace = TRUE, prob = startchrlens / sum(startchrlens))
+        spchrs <- sample(x = names(startchrlens),
+        size =  sampleNumb, replace = TRUE,
+        prob = startchrlens / sum(startchrlens))
         gr <- GRanges()
         for(chr in names(startchrlens)){
-            startpt <- sample(x = 1:startchrlens[chr],size = sum(spchrs == chr),replace = FALSE)
-            gr <- c(gr,GRanges(seqnames = chr, ranges = IRanges(start = startpt, width = 1000)))
+            startpt <- sample(x = 1:startchrlens[chr],
+            size = sum(spchrs == chr),replace = FALSE)
+            gr <- c(gr,GRanges(seqnames = chr,
+            ranges = IRanges(start = startpt, width = 1000)))
         }
         result <- sort(gr,ignore.strand=TRUE)
         rtracklayer::export.bed(object = result, con =  outputBed)
@@ -241,8 +341,10 @@ setMethod(
 )
 
 # This function is exported in NAMESPACE for user to use
-randomRegionOnGenome <- function(sampleNumb, regionLen = 1000, genome = NULL, outputBed = NULL, ...){
-    allpara <- c(list(Class = "RandomRegionOnGenome", prevSteps = list()),as.list(environment()),list(...))
+randomRegionOnGenome <- function(sampleNumb, regionLen = 1000,
+                                 genome = NULL, outputBed = NULL, ...){
+    allpara <- c(list(Class = "RandomRegionOnGenome", prevSteps = list()),
+                 as.list(environment()),list(...))
     step <- do.call(new,allpara)
     invisible(step)
 }
@@ -257,33 +359,39 @@ setMethod(
     f = "init",
     signature = "OverlappedRandomRegion",
     definition = function(.Object,prevSteps = list(),...){
-        # All arguments in function overlappedRandomRegion and runOerlappedRandomRegion will be passed from "..."
+        # All arguments in function overlappedRandomRegion and
+        # runOerlappedRandomRegion will be passed from "..."
         # so get the arguments from "..." first.
         allparam <- list(...)
         inputBed <- allparam[["inputBed"]]
         randomBed <- allparam[["randomBed"]]
         outputBed <- allparam[["outputBed"]]
-        # inputBed can obtain from previous step object when running runOerlappedRandomRegion
+        # inputBed can obtain from previous step object when running
+        # runOerlappedRandomRegion
         if(length(prevSteps)>0){
             prevStep <- prevSteps[[1]]
-            .Object@inputList$randomBed <- getParam(prevStep,"outputBed")
+            input(.Object)$randomBed <-  getParam(prevStep,"outputBed")
         }
         # begin to set input parameters
         if(!is.null(inputBed)){
-            .Object@inputList$inputBed <- inputBed
+            input(.Object)$inputBed <- inputBed
         }
         if(!is.null(randomBed)){
-            .Object@inputList$randomBed <- randomBed
+            input(.Object)$randomBed <- randomBed
         }
         # begin to set output parameters
         # the output is recemended to set under the step work directory
         if(!is.null(outputBed)){
-            .Object@outputList$outputBed <- outputBed
+            output(.Object)$outputBed <-  outputBed
         }else{
-            .Object@outputList$outputBed <- getAutoPath(.Object,.Object@inputList$inputBed, "bed", suffix = "bed")
+            output(.Object)$outputBed <-
+                getAutoPath(.Object, getParam(.Object, "inputBed"),
+                            "bed", suffix = "bed")
             # the path can also be generate in this way
             # ib <- getParam(.Object,"inputBed")
-            #.Object@outputList$outputBed <- file.path(getStepWorkDir(.Object),paste0(substring(ib,1,nchar(ib)-3), "bed"))
+            # output(.Object)$outputBed <-
+            #    file.path(getStepWorkDir(.Object),
+            #    paste0(substring(ib,1,nchar(ib)-3), "bed"))
         }
         # begin to set other parameters
         # no other parameters
@@ -316,17 +424,20 @@ setMethod(
 
 
 # This function is exported in NAMESPACE for user to use
-overlappedRandomRegion <- function(inputBed, randomBed, outputBed = NULL, ...){
-    allpara <- c(list(Class = "OverlappedRandomRegion", prevSteps = list()),as.list(environment()),list(...))
+overlappedRandomRegion <- function(inputBed, randomBed,
+                                   outputBed = NULL, ...){
+    allpara <- c(list(Class = "OverlappedRandomRegion",
+        prevSteps = list()),as.list(environment()),list(...))
     step <- do.call(new,allpara)
     invisible(step)
 }
 
-setGeneric("runOverlappedRandomRegion",function(prevStep,
-                                                inputBed,
-                                                randomBed = NULL,
-                                                outputBed = NULL,
-                                                ...) standardGeneric("runOverlappedRandomRegion"))
+setGeneric("runOverlappedRandomRegion",
+           function(prevStep,
+                    inputBed,
+                    randomBed = NULL,
+                    outputBed = NULL,
+                    ...) standardGeneric("runOverlappedRandomRegion"))
 
 
 
@@ -338,35 +449,45 @@ setMethod(
                           randomBed = NULL,
                           outputBed = NULL,
                           ...){
-        allpara <- c(list(Class = "OverlappedRandomRegion", prevSteps = list(prevStep)),as.list(environment()),list(...))
+        allpara <- c(list(Class = "OverlappedRandomRegion",
+            prevSteps = list(prevStep)),as.list(environment()),list(...))
         step <- do.call(new,allpara)
         invisible(step)
     }
 )
 
 # add to graph
-addEdges(edges = c("RandomRegionOnGenome","OverlappedRandomRegion"),argOrder = 1)
+addEdges(edges = c("RandomRegionOnGenome","OverlappedRandomRegion"),
+         argOrder = 1)
 # begin to test pipeline
 setGenome("hg19")
+# generate test BED file
+test_bed <- file.path(tempdir(),"test.bed")
+library(rtracklayer)
+export.bed(GRanges("chr7:1-127473000"),test_bed)
+
+
 rd <- randomRegionOnGenome(10000)
-overlap <- runOverlappedRandomRegion(rd,inputBed = system.file(package = "pipeFrame", "extdata","testRegion.bed"))
+overlap <- runOverlappedRandomRegion(rd, inputBed = test_bed)
 
 randombed <- getParam(rd,"outputBed")
 
 randombed
 
-overlap1 <-overlappedRandomRegion(inputBed = system.file(package = "pipeFrame", "extdata","testRegion.bed"),randomBed = randombed)
+overlap1 <-
+    overlappedRandomRegion(inputBed = test_bed, randomBed = randombed)
 
 clearStepCache(overlap1)
-overlap1 <-overlappedRandomRegion(inputBed = system.file(package = "pipeFrame", "extdata","testRegion.bed"),randomBed = randombed)
+overlap1 <-
+    overlappedRandomRegion(inputBed = test_bed, randomBed = randombed)
 clearStepCache(rd)
 clearStepCache(overlap1)
 rd <- randomRegionOnGenome(10000) \%>\%
-runOverlappedRandomRegion(inputBed = system.file(package = "pipeFrame", "extdata","testRegion.bed"))
+runOverlappedRandomRegion(inputBed = test_bed)
 
-getStepName(rd)
-getStepId(rd)
-getDefName(rd)
+stepName(rd)
+stepID(rd)
+
 
 isReady(rd)
 }
